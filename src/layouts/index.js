@@ -5,6 +5,7 @@ import { View } from 'react-native';
 
 import './index.css';
 import { Header } from '../components';
+import { profile } from '../data';
 
 const Layout = ({ children, data }) => (
   <React.Fragment>
@@ -15,7 +16,11 @@ const Layout = ({ children, data }) => (
         { name: 'keywords', content: 'sample, something' },
       ]}
     />
-    <Header siteTitle="Dave Pack" />
+    <Header
+      siteTitle="Dave Pack"
+      subtitle={profile.title}
+      location={profile.location}
+    />
     {children()}
   </React.Fragment>
 );

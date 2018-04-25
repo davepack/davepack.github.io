@@ -20,11 +20,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: '1.45rem',
   },
+  h3: {
+    fontSize: '1.38316rem',
+    fontWeight: 'bold',
+    marginBottom: '1.45rem',
+  },
+  h4: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginBottom: '1.45rem',
+  },
+  h5: {
+    fontSize: '0.85028rem',
+    fontWeight: 'bold',
+    marginBottom: '1.45rem',
+  },
   p: {
     fontSize: 16,
   },
   base: {
-    //
+    lineHeight: '1.1',
   },
 });
 
