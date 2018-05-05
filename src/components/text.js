@@ -1,7 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text as RNText } from 'react-native';
+import { StyleSheet, Text as RNText, View } from 'react-native';
 
-const Text = ({ style, type = 'p', children, ...props }) => {
+const Text = ({
+  style,
+  textStyle,
+  type = 'p',
+  headingLine = false,
+  children,
+  ...props
+}) => {
   return (
     <RNText style={[styles.base, styles[type], style]} {...props}>
       {children}
@@ -12,28 +19,23 @@ const Text = ({ style, type = 'p', children, ...props }) => {
 const styles = StyleSheet.create({
   h1: {
     fontSize: '2.25rem',
-    fontWeight: 'bold',
-    marginBottom: '1.45rem',
+    marginBottom: '1rem',
   },
   h2: {
     fontSize: '1.62671rem',
-    fontWeight: 'bold',
-    marginBottom: '1.45rem',
+    marginBottom: '1rem',
   },
   h3: {
     fontSize: '1.38316rem',
-    fontWeight: 'bold',
-    marginBottom: '1.45rem',
+    marginBottom: '1rem',
   },
   h4: {
     fontSize: '1rem',
-    fontWeight: 'bold',
-    marginBottom: '1.45rem',
+    marginBottom: '1rem',
   },
   h5: {
     fontSize: '0.85028rem',
-    fontWeight: 'bold',
-    marginBottom: '1.45rem',
+    marginBottom: '1rem',
   },
   p: {
     fontSize: 16,

@@ -40,23 +40,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: '1.0875rem',
   },
   titleText: {
-    marginBottom: 0,
     fontWeight: '100',
     letterSpacing: 2,
+    marginBottom: 0,
   },
   subtitleText: {
     color: 'whitesmoke',
     fontWeight: '100',
-    marginBottom: 0,
     letterSpacing: 1,
-    // marginTop: 15,
+    marginBottom: 0,
   },
   locationText: {
     color: 'whitesmoke',
     fontWeight: '100',
+    letterSpacing: 1,
     marginBottom: 0,
     marginTop: 5,
-    letterSpacing: 1,
   },
 });
 

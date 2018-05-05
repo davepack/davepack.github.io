@@ -627,9 +627,3 @@ pre tt:after {
     font-size: 100%;
   }
 }
-
-/* custom styles */
-
-.profile-pic {
-  box-shadow: 3px 3px 15px gray;
-}
