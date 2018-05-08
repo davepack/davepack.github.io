@@ -19,7 +19,11 @@ const Project = ({
 }) => {
   return (
     <View onLayout={onProjectLayout} style={styles.projectContainer}>
-      <TouchableOpacity onPress={onProjectPress} activeOpacity={0.7} style={styles.projectCard}>
+      <TouchableOpacity
+        onPress={onProjectPress}
+        activeOpacity={0.7}
+        style={styles.projectCard}
+      >
         <Image
           fileName={mainImage}
           width={CARDWIDTH}
@@ -66,10 +70,10 @@ export default class Projects extends Component {
   }) => {
     //
   };
-  
+
   onProjectPress = index => () => {
     //
-  }
+  };
 
   render() {
     let { projects, selectedTag } = this.props;
