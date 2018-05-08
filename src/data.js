@@ -7,7 +7,7 @@ export const profile = {
   location: 'Mountain View, CA',
   blurb:
     'I’m a big picture thinker. I love ideas and problem solving, learning about everything, finding connections and deep insights, thinking outside the box, and creating the future.',
-  profilePic: 'dave_profile.jpg',
+  profilePic: 'Profile-square',
   links: [
     ['https://twitter.com/dave_pack', 'Twitter'],
     ['https://github.com/davepack', 'GitHub'],
@@ -32,7 +32,7 @@ export const skills = {
 export const projects = [
   {
     title: 'Safe Area View for React Native',
-    mainImage: 'SafeArea.jpg',
+    mainImage: 'SafeArea-square',
     blurb:
       'OSS React Native library for supporting Safe Area insets on iPhone X. Originally written for react-navigation, then extracted to its own library.',
     tags: [
@@ -54,7 +54,7 @@ export const projects = [
   },
   {
     title: 'KnoWhy by Book of Mormon Central',
-    mainImage: 'KnoWhy.jpg',
+    mainImage: 'KnoWhy-square',
     blurb: 'Cross platform app written in React Native (JavaScript).',
     tags: [
       'react-native',
@@ -69,5 +69,67 @@ export const projects = [
     ],
     roles: ['designer', 'developer'],
     links: [['https://expo.io/@davepack/knowhy', 'Run app in Expo.']],
+  },
+  {
+    title: 'Safe Area View for React Native',
+    mainImage: 'SafeArea-square',
+    blurb:
+      'OSS React Native library for supporting Safe Area insets on iPhone X. Originally written for react-navigation, then extracted to its own library.',
+    tags: [
+      'react-native',
+      'react',
+      'javascript',
+      'open-source',
+      'api-design',
+      'front-end',
+      'mobile-design',
+    ],
+    roles: ['creator', 'active maintainer'],
+    links: [
+      [
+        'https://github.com/react-community/react-native-safe-area-view',
+        'GitHub',
+      ],
+    ],
+  },
+  {
+    title: 'KnoWhy by Book of Mormon Central',
+    mainImage: 'KnoWhy-square',
+    blurb: 'Cross platform app written in React Native (JavaScript).',
+    tags: [
+      'react-native',
+      'react',
+      'javascript',
+      'firebase',
+      'realm-db',
+      'front-end',
+      'ui-design',
+      'ux',
+      'mobile-design',
+    ],
+    roles: ['designer', 'developer'],
+    links: [['https://expo.io/@davepack/knowhy', 'Run app in Expo.']],
+  },
+  {
+    title: 'Safe Area View for React Native',
+    mainImage: 'SafeArea-square',
+    blurb:
+      'OSS React Native library for supporting Safe Area insets on iPhone X. Originally written for react-navigation, then extracted to its own library.',
+    tags: [
+      'react-native',
+      'react',
+      'javascript',
+      'open-source',
+      'api-design',
+      'front-end',
+      'mobile-design',
+    ],
+    roles: ['creator', 'active maintainer'],
+    links: [
+      [
+        'https://github.com/react-community/react-native-safe-area-view',
+        'GitHub',
+      ],
+    ],
   },
 ];

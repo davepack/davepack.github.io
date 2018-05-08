@@ -1,22 +1,22 @@
 import React from 'react';
-import Link from 'gatsby-link';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ExLink, Section, Text } from '../components';
+import Link, { withPrefix } from 'gatsby-link';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ExLink, Projects, Section, Text } from '../components';
 
+import { Image } from '../components';
 import { profile, skills, projects } from '../data';
-import profilePic from '../images/dave_profile.jpg';
 
 let colors = {
   steelblue: 'steelblue',
   lightSteelBlue: '#a3c2db',
-}
+};
 
-let SectionHeading = ({children}) => (
-  <View
-    style={[styles.headingContainer]}
-  >
+let SectionHeading = ({ children }) => (
+  <View style={[styles.headingContainer]}>
     <View style={styles.headingLine} />
-    <Text type='h2' style={{marginBottom: 0, marginHorizontal: 20}}>{children}</Text>
+    <Text type="h2" style={{ marginBottom: 0, marginHorizontal: 20 }}>
+      {children}
+    </Text>
     <View style={styles.headingLine} />
   </View>
 );
@@ -36,7 +36,9 @@ class IndexPage extends React.Component {
       <Section>
         <View style={styles.topContainer}>
           <Image
-            source={profilePic}
+            fileName={profile.profilePic}
+            height={80}
+            width={80}
             style={styles.profilePic}
             className="profile-pic"
           />
@@ -53,52 +55,59 @@ class IndexPage extends React.Component {
           </View>
         </View>
         <View style={[styles.sectionContainer, styles.skillsSectionContainer]}>
-          <SectionHeading>
-            Skills
-          </SectionHeading>
-          <View style={{alignItems: 'center', marginBottom: '1rem'}}>
+          <SectionHeading>Skills</SectionHeading>
+          <View style={{ alignItems: 'center', marginBottom: '1rem' }}>
             <Text>Click/tap a skill to see relevant projects.</Text>
           </View>
           <View style={styles.skillsContainer}>
             {Object.entries(skills).map(([tag, label]) => {
               let backgroundColor = 'steelblue';
               let color = 'white';
-              
+
               if (selectedTag === tag) {
                 backgroundColor = 'whitesmoke';
-                color = 'steelblue';  
+                color = 'steelblue';
               }
-              
+
               return (
                 <TouchableOpacity
-                  style={[styles.skillContainer, {backgroundColor}]}
+                  style={[styles.skillContainer, { backgroundColor }]}
                   onPress={() => this.pressSkillTag(tag)}
+                  activeOpacity={0.7}
                 >
-                  <Text style={[styles.skillText, {color}]}>{label}</Text>
+                  <Text style={[styles.skillText, { color }]}>{label}</Text>
                 </TouchableOpacity>
               );
             })}
           </View>
-            <TouchableOpacity onPress={() => this.pressSkillTag(false)} style={[styles.skillContainer, {alignSelf: 'center', backgroundColor: !selectedTag ? 'whitesmoke' : 'steelblue'}]}>
-              <Text style={{color: !selectedTag ? 'steelblue' : 'white'}}>{'\u00d7 '}Clear</Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.pressSkillTag(false)}
+            style={[
+              styles.skillContainer,
+              {
+                alignSelf: 'center',
+                backgroundColor: !selectedTag ? 'whitesmoke' : 'steelblue',
+                flexDirection: 'row',
+                alignItems: 'center',
+              },
+            ]}
+          >
+            <Text
+              style={{
+                color: !selectedTag ? 'steelblue' : 'white',
+                marginTop: -2,
+              }}
+            >
+              {'\u00d7 '}
+            </Text>
+            <Text style={{ color: !selectedTag ? 'steelblue' : 'white' }}>
+              Clear
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={[styles.sectionContainer, styles.projectsContainer]}>
-          <SectionHeading>
-            Projects
-          </SectionHeading>
-          {projects.map(({ title, blurb, tags, roles, links }, i) => {
-            if (selectedTag && !tags.includes(selectedTag)) {
-              return null;
-            }
-
-            return (
-              <View style={styles.projectContainer}>
-                <Text type="h3">{title}</Text>
-                <Text>{blurb}</Text>
-              </View>
-            );
-          })}
+          <SectionHeading>Projects</SectionHeading>
+          <Projects projects={projects} selectedTag={selectedTag} />
         </View>
       </Section>
     );
@@ -122,8 +131,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profilePic: {
-    height: 80,
-    width: 80,
     marginRight: 20,
     borderRadius: 40,
     'box-shadow': '3px 3px 15px gray',
@@ -158,7 +165,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   projectsContainer: {
-    //
+    // borderWidth: 1,
+    // borderColor: 'lightblue',
   },
   projectContainer: {
     paddingHorizontal: 20,
@@ -166,8 +174,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderLeftWidth: 4,
     borderLeftColor: colors.lightSteelBlue,
-    // borderRightWidth: 4,
-    // borderRightColor: 'steelblue',
   },
 });
 
