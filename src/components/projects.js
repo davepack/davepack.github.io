@@ -8,28 +8,18 @@ const CARDSIZE = 280;
 const MARGIN = 19.2;
 const DURATION = 200;
 
-const Project = ({
-  project,
-  onProjectPress,
-  projectLayout,
-  projectRef,
-}) => {
+const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
+  let { title, mainImage, blurb, tags, roles, links } = project;
+
   let {
-    title,
-    mainImage,
-    blurb,
-    tags,
-    roles,
-    links,
-  } = project;
-  
-  let { containerStyle, animatedBackgroundColor, animatedPosition, animatedSize, animatedStyle, cardSize, cardStyle } = projectLayout;
-  
-  let backgroundColor = animatedBackgroundColor.interpolate({
-    inputRange: [0,1],
-    outputRange: ['rgba(105,105,105,0)','rgba(25, 25, 25, 0.9)'],
-  });
-  
+    containerStyle,
+    animatedPosition,
+    animatedSize,
+    animatedStyle,
+    cardSize,
+    cardStyle,
+  } = projectLayout;
+
   return (
     <View
       ref={projectRef}
@@ -49,14 +39,14 @@ const Project = ({
             width: animatedSize.width,
             top: animatedPosition.top,
             left: animatedPosition.left,
-            backgroundColor,
             padding: MARGIN,
             alignItems: 'center',
           },
           animatedStyle,
         ]}
       >
-        <Animated.View style={[
+        <Animated.View
+          style={[
             styles.projectCard,
             {
               width: cardSize.width,
@@ -65,10 +55,7 @@ const Project = ({
             cardStyle,
           ]}
         >
-          <TouchableOpacity
-            onPress={onProjectPress}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity onPress={onProjectPress} activeOpacity={0.7}>
             <Image
               fileName={mainImage}
               width={CARDSIZE}
@@ -93,7 +80,6 @@ let projectStyles = {
   projectCard: {
     backgroundColor: 'white',
     borderRadius: 30,
-    boxShadow: '3px 3px 15px gray',
     overflow: 'hidden',
     height: '100%',
   },
@@ -118,7 +104,6 @@ export default class Projects extends Component {
     let projectsLayout = props.projects.map((p, i) => ({
       x: null,
       y: null,
-      animatedBackgroundColor: new Animated.Value(0),
       animatedSize: {
         width: new Animated.Value(CARDSIZE + 2 * MARGIN),
         height: new Animated.Value(CARDSIZE + 2 * MARGIN),
@@ -137,10 +122,14 @@ export default class Projects extends Component {
       containerStyle: {
         zIndex: 0,
       },
+      cardStyle: {
+        boxShadow: '3px 3px 15px gray',
+      },
     }));
     this.state = {
       projectIndex: null,
       projectsLayout,
+      animatedValue: new Animated.Value(0),
     };
   }
 
@@ -148,8 +137,6 @@ export default class Projects extends Component {
     let projectRef = this.projectRefs[index];
     if (projectRef) {
       projectRef.measureInWindow((x, y) => {
-        //if (index === 0) console.log(`x${x} y${y}`);
-        //console.log('measure project');
         let projectsLayout = [...this.state.projectsLayout];
         projectsLayout[index] = {
           ...projectsLayout[index],
@@ -163,92 +150,92 @@ export default class Projects extends Component {
   };
 
   openCard = (index, callback) => {
-    //console.log('open card');
-    
-    let projectsLayout = [
-      ...this.state.projectsLayout,
-    ];
-    
+    let projectsLayout = [...this.state.projectsLayout];
+
     projectsLayout[index] = {
       ...projectsLayout[index],
       animatedStyle: { position: 'absolute' },
       containerStyle: { zIndex: 9999 },
-    }
-    
-    this.setState(
-      { projectsLayout },
-      () => {
-        let { animatedBackgroundColor, animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[index];
-        let toCardWidth = Math.min(window.innerHeight, window.innerWidth) - 2 * MARGIN;
-        let toCardHeight = window.innerHeight - 2 * MARGIN;
+      cardStyle: {
+        boxShadow: 'unset',
+      },
+    };
 
-        let duration = DURATION;
-        Animated.sequence([
-          Animated.parallel([
-            Animated.timing(animatedBackgroundColor, {
-              toValue: 1,
-              duration,
-            }),
-            Animated.timing(animatedSize.height, {
-              toValue: window.innerHeight,
-              duration,
-            }),
-            Animated.timing(animatedSize.width, {
-              toValue: window.innerWidth,
-              duration,
-            }),
-            Animated.timing(cardSize.width, {
-              toValue: toCardWidth,
-              duration,
-            }),
-            Animated.timing(cardSize.height, {
-              toValue: toCardHeight,
-              duration,
-            }),
-            Animated.timing(animatedPosition.left, {
-              toValue: -x,
-              duration,
-            }),
-            Animated.timing(animatedPosition.top, {
-              toValue: -y,
-              duration,
-            }),
-          ]),
-          Animated.parallel([
-            Animated.timing(animatedPosition.left, {
-              toValue: 0,
-              duration: 0,
-            }),
-            Animated.timing(animatedPosition.top, {
-              toValue: 0,
-              duration: 0,
-            }),
-          ])
-        ]).start(callback);
-      }
-    );
+    this.setState({ projectsLayout }, () => {
+      let { animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[
+        index
+      ];
+      let toCardWidth =
+        Math.min(window.innerHeight, window.innerWidth) - 2 * MARGIN;
+      let toCardHeight = window.innerHeight - 2 * MARGIN;
+
+      let duration = DURATION;
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(this.state.animatedValue, {
+            toValue: 1,
+            duration,
+          }),
+          Animated.timing(animatedSize.height, {
+            toValue: window.innerHeight,
+            duration,
+          }),
+          Animated.timing(animatedSize.width, {
+            toValue: window.innerWidth,
+            duration,
+          }),
+          Animated.timing(cardSize.width, {
+            toValue: toCardWidth,
+            duration,
+          }),
+          Animated.timing(cardSize.height, {
+            toValue: toCardHeight,
+            duration,
+          }),
+          Animated.timing(animatedPosition.left, {
+            toValue: -x,
+            duration,
+          }),
+          Animated.timing(animatedPosition.top, {
+            toValue: -y,
+            duration,
+          }),
+        ]),
+        Animated.parallel([
+          Animated.timing(animatedPosition.left, {
+            toValue: 0,
+            duration: 0,
+          }),
+          Animated.timing(animatedPosition.top, {
+            toValue: 0,
+            duration: 0,
+          }),
+        ]),
+      ]).start(callback);
+    });
   };
 
   closeCard = (index, callback) => {
-    let projectsLayout = [
-      ...this.state.projectsLayout,
-    ];
-    
+    let projectsLayout = [...this.state.projectsLayout];
+
     projectsLayout[index] = {
       ...projectsLayout[index],
-      animatedStyle: {position: 'absolute'},
+      animatedStyle: { position: 'absolute' },
+      cardStyle: {
+        boxShadow: '3px 3px 15px gray',
+      },
     };
 
-    this.setState({projectsLayout}, () => {
-      //console.log('close card');
-      //console.log(projectsLayout);
-      let { animatedBackgroundColor, animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[index];
+    this.setState({ projectsLayout }, () => {
+      let { animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[
+        index
+      ];
       let toAnimatedSize = CARDSIZE + 2 * MARGIN;
       let toPosition = {
         top: 0,
         left: 0,
       };
-  
+
       let duration = DURATION;
       Animated.sequence([
         Animated.parallel([
@@ -262,7 +249,7 @@ export default class Projects extends Component {
           }),
         ]),
         Animated.parallel([
-          Animated.timing(animatedBackgroundColor, {
+          Animated.timing(this.state.animatedValue, {
             toValue: 0,
             duration,
           }),
@@ -296,23 +283,14 @@ export default class Projects extends Component {
   };
 
   fixCardOpen = (index, callback) => {
-    //console.log('fixCard');
-    let projectsLayout = [
-      ...this.state.projectsLayout,
-    ];
+    let projectsLayout = [...this.state.projectsLayout];
 
-    let width = Math.min(window.innerWidth,  window.innerHeight);
+    let width = Math.min(window.innerWidth, window.innerHeight);
     let height = width;
     projectsLayout[index] = {
       ...projectsLayout[index],
       animatedStyle: {
         position: 'fixed',
-/*        width,
-        height,
-        marginVertical: MARGIN,
-        marginHorizontal: 'auto',
-        top: 0,
-        left: 0,*/
       },
     };
 
@@ -322,22 +300,19 @@ export default class Projects extends Component {
   };
 
   onProjectPress = index => () => {
-    //console.log(`${index} pressed`);
     this.measureProject(index, () => {
       let { projectIndex: oldIndex } = this.state;
       let projectIndex = oldIndex === index ? null : index;
-      
-      //console.log(`${index} ${oldIndex} ${projectIndex}`); 
 
       if (oldIndex === index) {
-        let projectsLayout = [
-          ...this.state.projectsLayout,
-        ];
+        // close card
+        let projectsLayout = [...this.state.projectsLayout];
 
         projectsLayout[index] = {
           ...projectsLayout[index],
           animatedStyle: { position: 'relative', top: 0, left: 0 },
           containerStyle: { zIndex: 0 },
+          cardStyle: { boxShadow: '3px 3px 15px gray' },
         };
 
         this.closeCard(index, () => {
@@ -347,6 +322,7 @@ export default class Projects extends Component {
           });
         });
       } else {
+        // open card
         this.openCard(index, () => {
           this.fixCardOpen(index, () => {
             this.setState({ projectIndex });
@@ -362,17 +338,36 @@ export default class Projects extends Component {
 
   render() {
     let { projects } = this.props;
-    let { projectsLayout, projectIndex, cardStyle } = this.state;
+    let { animatedValue, projectsLayout, projectIndex } = this.state;
+
+    let backgroundColor = animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['rgba(105,105,105,0)', 'rgba(25, 25, 25, 0.9)'],
+    });
+
+    let zIndex = animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 99],
+    });
+
     return (
       <View
         style={styles.projectsContainer}
         ref={c => (this.projectsContainerRef = c)}
       >
+        <Animated.View
+          pointerEvents="box-none"
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            zIndex,
+            backgroundColor,
+          }}
+        />
         {projects.map((project, i) => {
-          //console.log(`render ${i}`)
-          //console.log(projectsLayout[i]);
-          //return (<View key={`project-${i}`}><Text>{project.title}</Text></View>);
-          
           return (
             <Project
               key={`project-${i}`}
@@ -395,7 +390,5 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     margin: -MARGIN,
-    // borderWidth: 1,
-    // borderColor: 'pink',
   },
 });
