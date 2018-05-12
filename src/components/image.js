@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image as RNImage } from 'react-native';
+import { Animated } from 'react-native';
 import { withPrefix } from 'gatsby-link';
 
 const TINY = 200;
@@ -17,9 +17,7 @@ let Image = ({ fileName, width, height, style, ...props }) => {
 
   let uri = withPrefix('/images/' + fileName);
 
-  return (
-    <RNImage source={{ uri }} style={[style, { height, width }]} {...props} />
-  );
+  return <Animated.Image source={{ uri }} style={style} {...props} />;
 };
 
 export default Image;

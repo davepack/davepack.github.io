@@ -1,9 +1,8 @@
 import React from 'react';
 import Link, { withPrefix } from 'gatsby-link';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ExLink, Projects, Section, Text } from '../components';
 
-import { Image } from '../components';
 import { profile, skills, projects } from '../data';
 
 let colors = {
@@ -32,13 +31,12 @@ class IndexPage extends React.Component {
 
   render() {
     let { selectedTag } = this.state;
+    let profilePicUri = withPrefix(`/images/${profile.profilePic}-small.jpg`);
     return (
       <Section>
         <View style={styles.topContainer}>
           <Image
-            fileName={profile.profilePic}
-            height={80}
-            width={80}
+            source={{ uri: profilePicUri }}
             style={styles.profilePic}
             className="profile-pic"
           />
@@ -46,7 +44,7 @@ class IndexPage extends React.Component {
             <Text style={styles.blurbText}>{profile.blurb}</Text>
             <Text style={styles.linksText}>
               {profile.links.map(([to, title], i) => (
-                <React.Fragment>
+                <React.Fragment key={`links-${i}`}>
                   <ExLink to={to}>{title}</ExLink>
                   {i === profile.links.length - 1 ? '' : ' | '}
                 </React.Fragment>
@@ -60,7 +58,7 @@ class IndexPage extends React.Component {
             <Text>Click/tap a skill to see relevant projects.</Text>
           </View>
           <View style={styles.skillsContainer}>
-            {Object.entries(skills).map(([tag, label]) => {
+            {Object.entries(skills).map(([tag, label], i) => {
               let backgroundColor = 'steelblue';
               let color = 'white';
 
@@ -71,6 +69,7 @@ class IndexPage extends React.Component {
 
               return (
                 <TouchableOpacity
+                  key={`tags-${i}-${tag}`}
                   style={[styles.skillContainer, { backgroundColor }]}
                   onPress={() => this.pressSkillTag(tag)}
                   activeOpacity={0.7}
@@ -133,7 +132,9 @@ const styles = StyleSheet.create({
   profilePic: {
     marginRight: 20,
     borderRadius: 40,
-    'box-shadow': '3px 3px 15px gray',
+    width: 80,
+    height: 80,
+    boxShadow: '3px 3px 15px gray',
   },
   blurbText: {
     //

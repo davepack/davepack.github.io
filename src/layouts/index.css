@@ -627,3 +627,9 @@ pre tt:after {
     font-size: 100%;
   }
 }
+
+iframe {
+  height: 0 !important;
+  width: 0 !important;
+  z-index: -21231231 !important;
+}
