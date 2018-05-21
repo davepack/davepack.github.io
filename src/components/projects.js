@@ -7,8 +7,33 @@ import { Image } from './';
 const CARDSIZE = 280;
 const MARGIN = 19.2;
 const DURATION = 200;
+const MAXSIZE = 960;
 
-const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
+// from https://davidwalsh.name/javascript-debounce-function
+let debounce = (func, wait, immediate) => {
+  var timeout;
+  return function() {
+    var context = this,
+      args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+
+const Project = ({
+  project,
+  onProjectPress,
+  onProjectLayout,
+  projectLayout,
+  projectRef,
+  disablePress,
+}) => {
   let { title, mainImage, blurb, tags, roles, links } = project;
 
   let {
@@ -16,19 +41,30 @@ const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
     animatedPosition,
     animatedSize,
     animatedStyle,
+    cardPosition,
     cardSize,
+    cardOpacity,
     cardStyle,
+    genericValue,
   } = projectLayout;
+
+  let titleFontSize = genericValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['20px', '30px'],
+  });
 
   return (
     <View
       ref={projectRef}
+      onLayout={onProjectLayout}
       style={[
         styles.projectContainer,
         containerStyle,
         {
           height: CARDSIZE + 2 * MARGIN,
           width: CARDSIZE + 2 * MARGIN,
+          // borderWidth: 2,
+          // borderColor: 'purple',
         },
       ]}
     >
@@ -41,6 +77,9 @@ const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
             left: animatedPosition.left,
             padding: MARGIN,
             alignItems: 'center',
+            justifyContent: 'center',
+            // borderWidth: 2,
+            // borderColor: 'red',
           },
           animatedStyle,
         ]}
@@ -51,11 +90,21 @@ const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
             {
               width: cardSize.width,
               height: cardSize.height,
+              opacity: cardOpacity,
+              top: cardPosition.top,
+              left: cardPosition.left,
+              maxHeight: MAXSIZE,
+              maxWidth: MAXSIZE,
             },
             cardStyle,
           ]}
         >
-          <TouchableOpacity onPress={onProjectPress} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={onProjectPress}
+            activeOpacity={0.7}
+            disabled={disablePress}
+            style={{ height: '100%' }}
+          >
             <Image
               fileName={mainImage}
               width={CARDSIZE}
@@ -64,7 +113,28 @@ const Project = ({ project, onProjectPress, projectLayout, projectRef }) => {
               resizeMode="cover"
             />
             <View style={styles.blurbContainer}>
-              <Text>{title}</Text>
+              <Animated.Text
+                // numberOfLines={1}
+                title={title}
+                style={{
+                  lineHeight: '1.1',
+                  fontSize: titleFontSize,
+                  marginBottom: 15,
+                }}
+              >
+                {title}
+              </Animated.Text>
+              <Animated.Text style={{ lineHeight: '1.1', fontSize: 16 }}>
+                {blurb}
+              </Animated.Text>
+              <TouchableOpacity
+                onPress={onProjectPress}
+                disabled={!disablePress}
+              >
+                <Animated.Text style={{ opacity: genericValue }}>
+                  Close
+                </Animated.Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -82,6 +152,11 @@ let projectStyles = {
     borderRadius: 30,
     overflow: 'hidden',
     height: '100%',
+    // borderWidth: 2,
+    // borderColor: 'pink',
+  },
+  titleText: {
+    fontSize: '100%',
   },
   blurbContainer: {
     position: 'absolute',
@@ -101,32 +176,45 @@ export default class Projects extends Component {
 
   constructor(props) {
     super(props);
-    let projectsLayout = props.projects.map((p, i) => ({
-      x: null,
-      y: null,
-      animatedSize: {
-        width: new Animated.Value(CARDSIZE + 2 * MARGIN),
-        height: new Animated.Value(CARDSIZE + 2 * MARGIN),
-      },
-      animatedPosition: {
-        left: new Animated.Value(0),
-        top: new Animated.Value(0),
-      },
-      cardSize: {
-        width: new Animated.Value(CARDSIZE),
-        height: new Animated.Value(CARDSIZE),
-      },
-      animatedStyle: {
-        position: 'relative',
-      },
-      containerStyle: {
-        zIndex: 0,
-      },
-      cardStyle: {
-        boxShadow: '3px 3px 15px gray',
-      },
-    }));
+    let visibleCards = [];
+    let projectsLayout = props.projects.map((p, i) => {
+      visibleCards.push(i);
+      return {
+        xW: null,
+        yW: null,
+        xP: null,
+        yP: null,
+        animatedSize: {
+          width: new Animated.Value(CARDSIZE + 2 * MARGIN),
+          height: new Animated.Value(CARDSIZE + 2 * MARGIN),
+        },
+        animatedPosition: {
+          top: new Animated.Value(0),
+          left: new Animated.Value(0),
+        },
+        cardPosition: {
+          top: new Animated.Value(0),
+          left: new Animated.Value(0),
+        },
+        cardSize: {
+          width: new Animated.Value(CARDSIZE),
+          height: new Animated.Value(CARDSIZE),
+        },
+        cardOpacity: new Animated.Value(1),
+        genericValue: new Animated.Value(0),
+        animatedStyle: {
+          position: 'relative',
+        },
+        containerStyle: {
+          zIndex: 0,
+        },
+        cardStyle: {
+          boxShadow: '3px 3px 15px gray',
+        },
+      };
+    });
     this.state = {
+      visibleCards,
       projectIndex: null,
       projectsLayout,
       animatedValue: new Animated.Value(0),
@@ -136,12 +224,12 @@ export default class Projects extends Component {
   measureProject = (index, callback) => {
     let projectRef = this.projectRefs[index];
     if (projectRef) {
-      projectRef.measureInWindow((x, y) => {
+      projectRef.measureInWindow((xW, yW) => {
         let projectsLayout = [...this.state.projectsLayout];
         projectsLayout[index] = {
           ...projectsLayout[index],
-          x,
-          y,
+          xW,
+          yW,
         };
 
         this.setState({ projectsLayout }, callback);
@@ -162,12 +250,19 @@ export default class Projects extends Component {
     };
 
     this.setState({ projectsLayout }, () => {
-      let { animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[
-        index
-      ];
+      let {
+        animatedSize,
+        animatedPosition,
+        cardPosition,
+        cardSize,
+        xW,
+        yW,
+        genericValue,
+      } = projectsLayout[index];
+
       let toCardWidth =
-        Math.min(window.innerHeight, window.innerWidth) - 2 * MARGIN;
-      let toCardHeight = window.innerHeight - 2 * MARGIN;
+        Math.min(MAXSIZE, window.innerHeight, window.innerWidth) - 2 * MARGIN;
+      let toCardHeight = Math.min(MAXSIZE, window.innerHeight) - 2 * MARGIN;
 
       let duration = DURATION;
       Animated.sequence([
@@ -184,6 +279,14 @@ export default class Projects extends Component {
             toValue: window.innerWidth,
             duration,
           }),
+          Animated.timing(cardPosition.top, {
+            toValue: 0,
+            duration,
+          }),
+          Animated.timing(cardPosition.left, {
+            toValue: 0,
+            duration,
+          }),
           Animated.timing(cardSize.width, {
             toValue: toCardWidth,
             duration,
@@ -193,11 +296,15 @@ export default class Projects extends Component {
             duration,
           }),
           Animated.timing(animatedPosition.left, {
-            toValue: -x,
+            toValue: -xW,
             duration,
           }),
           Animated.timing(animatedPosition.top, {
-            toValue: -y,
+            toValue: -yW,
+            duration,
+          }),
+          Animated.timing(genericValue, {
+            toValue: 1,
             duration,
           }),
         ]),
@@ -227,9 +334,14 @@ export default class Projects extends Component {
     };
 
     this.setState({ projectsLayout }, () => {
-      let { animatedSize, animatedPosition, cardSize, x, y } = projectsLayout[
-        index
-      ];
+      let {
+        animatedSize,
+        animatedPosition,
+        cardSize,
+        xW,
+        yW,
+        genericValue,
+      } = projectsLayout[index];
       let toAnimatedSize = CARDSIZE + 2 * MARGIN;
       let toPosition = {
         top: 0,
@@ -240,11 +352,11 @@ export default class Projects extends Component {
       Animated.sequence([
         Animated.parallel([
           Animated.timing(animatedPosition.left, {
-            toValue: -x,
+            toValue: -xW,
             duration: 0,
           }),
           Animated.timing(animatedPosition.top, {
-            toValue: -y,
+            toValue: -yW,
             duration: 0,
           }),
         ]),
@@ -277,6 +389,11 @@ export default class Projects extends Component {
             toValue: 0,
             duration,
           }),
+          Animated.timing(genericValue, {
+            toValue: 0,
+            duration,
+          }),
+          this.moveCards(this.state.visibleCards),
         ]),
       ]).start(callback);
     });
@@ -323,22 +440,141 @@ export default class Projects extends Component {
         });
       } else {
         // open card
-        this.openCard(index, () => {
-          this.fixCardOpen(index, () => {
-            this.setState({ projectIndex });
+        this.setState({ projectIndex }, () => {
+          this.openCard(index, () => {
+            this.fixCardOpen(index);
           });
         });
       }
     });
   };
 
-  componentWillReceiveProps({ selectedTag }) {
+  onProjectLayout = index => ({
+    nativeEvent: {
+      layout: { x: xP, y: yP, width, height },
+    },
+  }) => {
+    // console.log('on project layout');
+    let projectsLayout = [...this.state.projectsLayout];
+
+    projectsLayout[index] = {
+      ...projectsLayout[index],
+      xP,
+      yP,
+    };
+
+    this.setState({ projectsLayout });
+  };
+
+  disappearCards = removeArr => {
+    let removimationArr = [];
+
+    removeArr.forEach(index => {
+      let { cardOpacity } = this.state.projectsLayout[index];
+
+      removimationArr.push(
+        Animated.timing(cardOpacity, {
+          toValue: 0,
+          duration: DURATION,
+        })
+      );
+    });
+
+    return Animated.parallel(removimationArr);
+  };
+
+  appearCards = appearArr => {
+    let appearimationArr = [];
+
+    appearArr.forEach(index => {
+      let { cardOpacity } = this.state.projectsLayout[index];
+
+      appearimationArr.push(
+        Animated.timing(cardOpacity, {
+          toValue: 1,
+          duration: DURATION,
+        })
+      );
+    });
+
+    return Animated.parallel(appearimationArr);
+  };
+
+  moveCards = moveArr => {
+    let movimationArr = [];
+
+    moveArr.forEach((index, newIndex) => {
+      let { projectsLayout } = this.state;
+      let { cardPosition, xP, yP } = projectsLayout[index];
+      let { xP: newX, yP: newY } = projectsLayout[newIndex];
+
+      let toTopValue = newY - yP;
+      let toLeftValue = newX - xP;
+
+      movimationArr.push(
+        Animated.timing(cardPosition.top, {
+          toValue: toTopValue,
+          duration: DURATION,
+        }),
+        Animated.timing(cardPosition.left, {
+          toValue: toLeftValue,
+          duration: DURATION,
+        })
+      );
+    });
+
+    return Animated.parallel(movimationArr);
+  };
+
+  arrangeCards = selectedTag => {
     // animate card position in list
+    let { projects } = this.props;
+    let { visibleCards, projectsLayout } = this.state;
+
+    let appearArr = [];
+    let moveArr = [];
+    let removeArr = [];
+
+    projects.forEach(({ tags }, i) => {
+      if (!selectedTag) {
+        if (!visibleCards.includes(i)) {
+          appearArr.push(i);
+        }
+        moveArr.push(i);
+        return;
+      }
+
+      if (tags.includes(selectedTag)) {
+        if (!visibleCards.includes(i)) {
+          appearArr.push(i);
+        }
+        moveArr.push(i);
+      } else {
+        removeArr.push(i);
+      }
+    });
+
+    Animated.parallel([
+      this.disappearCards(removeArr),
+      this.appearCards(appearArr),
+      this.moveCards(moveArr),
+    ]).start();
+
+    this.setState({ visibleCards: moveArr });
+  };
+
+  componentWillReceiveProps({ selectedTag }) {
+    this.arrangeCards(selectedTag);
   }
 
   render() {
     let { projects } = this.props;
-    let { animatedValue, projectsLayout, projectIndex } = this.state;
+    let {
+      animatedValue,
+      projectsLayout,
+      projectIndex,
+      visibleCards,
+    } = this.state;
 
     let backgroundColor = animatedValue.interpolate({
       inputRange: [0, 1],
@@ -363,7 +599,7 @@ export default class Projects extends Component {
             top: 0,
             right: 0,
             bottom: 0,
-            zIndex,
+            zIndex: projectIndex >= 0 ? 99 : 0,
             backgroundColor,
           }}
         />
@@ -373,8 +609,10 @@ export default class Projects extends Component {
               key={`project-${i}`}
               projectRef={c => (this.projectRefs[i] = c)}
               onProjectPress={this.onProjectPress(i)}
+              onProjectLayout={debounce(this.onProjectLayout(i), 250)}
               projectLayout={projectsLayout[i]}
               project={project}
+              disablePress={projectIndex === i || !visibleCards.includes(i)}
             />
           );
         })}
