@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Text } from './';
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { Image } from './';
+import { ExLink, Image, Text } from './';
 
 const CARDSIZE = 280;
 const MARGIN = 19.2;
@@ -33,8 +38,10 @@ const Project = ({
   projectLayout,
   projectRef,
   disablePress,
+  skills,
+  projectIsOpen,
 }) => {
-  let { title, mainImage, blurb, tags, roles, links } = project;
+  let { title, mainImage, blurb, tags, roles, links, timeFrame } = project;
 
   let {
     containerStyle,
@@ -52,6 +59,8 @@ const Project = ({
     inputRange: [0, 1],
     outputRange: ['20px', '30px'],
   });
+
+  console.log(projectIsOpen);
 
   return (
     <View
@@ -113,28 +122,55 @@ const Project = ({
               resizeMode="cover"
             />
             <View style={styles.blurbContainer}>
-              <Animated.Text
-                // numberOfLines={1}
-                title={title}
-                style={{
-                  lineHeight: '1.1',
-                  fontSize: titleFontSize,
-                  marginBottom: 15,
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={{
+                  overflow: projectIsOpen ? undefined : 'hidden',
                 }}
               >
-                {title}
-              </Animated.Text>
-              <Animated.Text style={{ lineHeight: '1.1', fontSize: 16 }}>
-                {blurb}
-              </Animated.Text>
-              <TouchableOpacity
-                onPress={onProjectPress}
-                disabled={!disablePress}
-              >
-                <Animated.Text style={{ opacity: genericValue }}>
-                  Close
+                <Animated.Text
+                  // numberOfLines={1}
+                  title={title}
+                  style={{
+                    lineHeight: '1.1',
+                    fontSize: titleFontSize,
+                    marginBottom: 15,
+                    marginTop: 20,
+                  }}
+                >
+                  {title}
                 </Animated.Text>
-              </TouchableOpacity>
+                <Animated.Text style={{ lineHeight: '1.1', fontSize: 16 }}>
+                  {blurb}
+                </Animated.Text>
+                <Animated.View
+                  style={{
+                    opacity: genericValue,
+                    marginBottom: 15,
+                    height: projectIsOpen ? undefined : 0,
+                  }}
+                >
+                  <Text type="h4">Roles</Text>
+                  <Text>{roles.join(', ')}</Text>
+                  <Text type="h4">Skills</Text>
+                  <Text>{tags.map(tag => skills[tag]).join(', ')}</Text>
+                  <Text type="h4">Links</Text>
+                  {links.map(({ title, url, desc }) => (
+                    <React.Fragment key={url}>
+                      <ExLink to={url}>{title}</ExLink>
+                      {desc && <Text>{desc}</Text>}
+                    </React.Fragment>
+                  ))}
+                  <Text />
+                  <TouchableOpacity
+                    onPress={onProjectPress}
+                    disabled={!disablePress}
+                    style={{ marginVertical: 20 }}
+                  >
+                    <Text>Close</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </ScrollView>
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -165,8 +201,14 @@ let projectStyles = {
     right: 0,
     height: '65%',
     backgroundColor: 'white',
-    padding: 20,
     boxShadow: '1px 1px 5px gray',
+  },
+  scrollView: {
+    paddingHorizontal: 20,
+    boxSizing: 'border-box',
+    // borderWidth: 3,
+    // borderColor: 'lightblue',
+    marginBottom: 15,
   },
 };
 
@@ -568,7 +610,7 @@ export default class Projects extends Component {
   }
 
   render() {
-    let { projects } = this.props;
+    let { projects, skills } = this.props;
     let {
       animatedValue,
       projectsLayout,
@@ -604,6 +646,7 @@ export default class Projects extends Component {
           }}
         />
         {projects.map((project, i) => {
+          let projectIsOpen = projectIndex === i;
           return (
             <Project
               key={`project-${i}`}
@@ -612,7 +655,9 @@ export default class Projects extends Component {
               onProjectLayout={debounce(this.onProjectLayout(i), 250)}
               projectLayout={projectsLayout[i]}
               project={project}
-              disablePress={projectIndex === i || !visibleCards.includes(i)}
+              disablePress={projectIsOpen || !visibleCards.includes(i)}
+              skills={skills}
+              projectIsOpen={projectIsOpen}
             />
           );
         })}

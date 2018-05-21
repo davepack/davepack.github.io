@@ -19,29 +19,28 @@ const Text = ({
 const styles = StyleSheet.create({
   h1: {
     fontSize: '2.25rem',
-    marginBottom: '1rem',
   },
   h2: {
     fontSize: '1.62671rem',
-    marginBottom: '1rem',
   },
   h3: {
     fontSize: '1.38316rem',
-    marginBottom: '1rem',
   },
   h4: {
-    fontSize: '1rem',
-    marginBottom: '1rem',
+    fontSize: '1.2rem',
   },
   h5: {
-    fontSize: '0.85028rem',
-    marginBottom: '1rem',
+    fontSize: '1rem',
   },
   p: {
     fontSize: 16,
+    marginTop: 0,
+    marginBottom: 0,
   },
   base: {
     lineHeight: '1.1',
+    marginTop: 15,
+    marginBottom: 5,
   },
 });
 

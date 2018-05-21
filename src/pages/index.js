@@ -106,7 +106,11 @@ class IndexPage extends React.Component {
         </View>
         <View style={[styles.sectionContainer, styles.projectsContainer]}>
           <SectionHeading>Projects</SectionHeading>
-          <Projects projects={projects} selectedTag={selectedTag} />
+          <Projects
+            projects={projects}
+            skills={skills}
+            selectedTag={selectedTag}
+          />
         </View>
       </Section>
     );
