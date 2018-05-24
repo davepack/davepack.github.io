@@ -60,8 +60,6 @@ const Project = ({
     outputRange: ['20px', '30px'],
   });
 
-  console.log(projectIsOpen);
-
   return (
     <View
       ref={projectRef}

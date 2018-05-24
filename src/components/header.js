@@ -43,12 +43,14 @@ const styles = StyleSheet.create({
     fontWeight: '100',
     letterSpacing: 2,
     marginBottom: 0,
+    marginTop: 0,
   },
   subtitleText: {
     color: 'whitesmoke',
     fontWeight: '100',
     letterSpacing: 1,
     marginBottom: 0,
+    marginTop: 0,
   },
   locationText: {
     color: 'whitesmoke',

@@ -6,7 +6,34 @@ export const profile = {
   title: 'Front End Engineer',
   location: 'Mountain View, CA',
   blurb:
-    'I’m a big picture thinker. I love ideas and problem solving, learning about everything, finding connections and deep insights, thinking outside the box, and creating the future.',
+    'Strong front-end engineer, experience building mobile apps with React Native and web apps with React. Comfortable in the back-end working on the server, databases, or API design.\n\nI’m a big picture thinker. I love ideas and problem solving, learning about everything, finding connections and deep insights, and thinking outside the box.',
+  status:
+    'Currently looking for jobs in or near Mountain View, open to commuting to SF or San Jose.',
+  ideals: [
+    'Work on an interdisciplinary team.',
+    'Collaborate in designing and implementing new products and features.',
+    'Contribute meaningfully to product strategy, design, and development.',
+    'Grow my current skills, learn new skills, mentor and teach others.',
+    'Give back through open source contribution.',
+  ],
+  goals: [
+    {
+      title: '1 year',
+      blurb: 'Give my first conference talk.',
+    },
+    {
+      title: '3 years',
+      blurb: 'Cofound a successfully funded startup.',
+    },
+    {
+      title: '5 years',
+      blurb: 'Speak in 5 different countries.',
+    },
+    {
+      title: '10 years',
+      blurb: 'Live in a tiny house and travel the world.',
+    },
+  ],
   profilePic: 'Profile-square',
   links: [
     ['https://twitter.com/dave_pack', 'Twitter'],
@@ -38,7 +65,7 @@ export const projects = [
     title: 'Personal Portfolio (this website)',
     mainImage: 'Portfolio',
     blurb:
-      'My personal site for showcasing my work and skills. Built with react-native-web.',
+      'My personal site for showcasing my work and skills. Built with Gatsby static site generator and react-native-web.',
     tags: [
       'react-native-web',
       'react-native',
@@ -60,6 +87,7 @@ export const projects = [
         url: 'https://github.com/necolas/react-native-web',
       },
     ],
+    timeFrame: [[2018, 4], [2018, 5]],
   },
   {
     title: 'SafeAreaView for React Native',
@@ -82,7 +110,7 @@ export const projects = [
         url: 'https://github.com/react-community/react-native-safe-area-view',
       },
     ],
-    timeFrame: [['2017', '08'], ['2017', '11']],
+    timeFrame: [[2017, 8], [2017, 11]],
   },
   {
     title: 'KnoWhy by Book of Mormon Central',
@@ -109,6 +137,6 @@ export const projects = [
           'I modified the code to run in Expo, though it runs a bit slower than it originally did.',
       },
     ],
-    timeFrame: [['2016', '04'], ['2017', '06']],
+    timeFrame: [[2016, 4], [2017, 6]],
   },
 ];
