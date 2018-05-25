@@ -13,6 +13,8 @@ let Image = ({ fileName, width, height, style, ...props }) => {
     fileName += '-small.jpg';
   } else if (height <= MED && width <= MED) {
     fileName += '-medium.jpg';
+  } else {
+    fileName += '.jpg';
   }
 
   let uri = withPrefix('/images/' + fileName);
