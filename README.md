@@ -1,26 +1,29 @@
-# gatsby-starter-default
-The default Gatsby starter.
+# Dave Pack Portfolio
 
-For an overview of the project structure please refer to the [Gatsby documentation - Building with Components](https://www.gatsbyjs.org/docs/building-with-components/).
+Built with Gatsby and React Native Web.
+
+This was built rather quickly and needs some refactoring, not to mention UI/UX improvements. However, I'm proud of it! The animations use the React Native Animated api available in React Native Web.
 
 ## Install
 
-Make sure that you have the Gatsby CLI program installed:
+Clone this repository and checkout the `source` branch.
+
+Make sure you have the Gatsby CLI program installed:
+
 ```sh
-npm install --global gatsby-cli
+yarn global add gatsby-cli
 ```
 
-And run from your CLI:
+And run from the project root:
+
 ```sh
-gatsby new gatsby-example-site
+gatsby develop
 ```
 
-Then you can run it by:
-```sh
-cd gatsby-example-site
-npm run develop
-```
+## Planned improvements
 
-## Deploy
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/gatsbyjs/gatsby-starter-default)
+* [ ] Responsive card when project is being viewed.
+* [ ] Responsive card animations (card moves to correct location after window resize).
+* [ ] Improve card information layout and style.
+* [ ] Better close button on card.
+* [ ] Add a section to project info for describing dev/design process.
