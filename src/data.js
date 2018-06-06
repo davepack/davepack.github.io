@@ -54,7 +54,7 @@ export const skills = {
   ux: 'UX',
   firebase: 'Firebase',
   'realm-db': 'Realm Mobile DB',
-  'react-native-web': 'react-native-web',
+  'react-native-web': 'React Native Web',
   animation: 'Animation',
   'web-development': 'Web Development',
   'mobile-development': 'Mobile Development',
