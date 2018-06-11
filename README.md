@@ -27,3 +27,4 @@ gatsby develop
 * [ ] Improve card information layout and style.
 * [ ] Better close button on card.
 * [ ] Add a section to project info for describing dev/design process.
+* [ ] Refactor animations code.
